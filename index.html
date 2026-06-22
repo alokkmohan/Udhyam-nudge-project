@@ -6,169 +6,159 @@
 <title>Udhyam AI Nudge Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Segoe UI', sans-serif; background: #f0f2f6; color: #262730; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',sans-serif; background:#f0f2f6; color:#262730; }
 
-  /* ── NAV ── */
   nav {
-    background: #1a73e8;
-    color: white;
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    height: 56px;
-    position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    background:#1a73e8; color:white; padding:0 24px;
+    display:flex; align-items:center; gap:16px; height:54px;
+    position:sticky; top:0; z-index:100;
+    box-shadow:0 2px 8px rgba(0,0,0,0.15);
   }
-  nav h1 { font-size: 1.1rem; font-weight: 700; flex: 1; }
-  nav .tabs { display: flex; gap: 4px; }
-  nav .tab {
-    padding: 8px 18px; border-radius: 6px; cursor: pointer;
-    font-size: 0.85rem; font-weight: 500; border: none;
-    background: transparent; color: rgba(255,255,255,0.75);
-    transition: all 0.2s;
+  nav h1 { font-size:1.05rem; font-weight:700; flex:1; }
+  .tabs { display:flex; gap:4px; }
+  .tab {
+    padding:7px 18px; border-radius:6px; cursor:pointer;
+    font-size:0.85rem; font-weight:500; border:none;
+    background:transparent; color:rgba(255,255,255,0.75);
+    transition:all 0.2s;
   }
-  nav .tab:hover { background: rgba(255,255,255,0.15); color: white; }
-  nav .tab.active { background: white; color: #1a73e8; }
-  #last-updated { font-size: 0.75rem; opacity: 0.7; }
+  .tab:hover { background:rgba(255,255,255,0.15); color:white; }
+  .tab.active { background:white; color:#1a73e8; }
+  #ts { font-size:0.72rem; opacity:0.7; }
 
-  /* ── LAYOUT ── */
-  .page { display: none; padding: 24px; max-width: 1400px; margin: 0 auto; }
-  .page.active { display: block; }
+  .page { display:none; padding:24px; max-width:1400px; margin:0 auto; }
+  .page.active { display:block; }
 
-  /* ── CARDS ── */
-  .metric-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px; }
-  .metric-card {
-    background: white; border-radius: 12px; padding: 20px;
-    text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    border-top: 4px solid #1a73e8;
+  .metric-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+  .card {
+    background:white; border-radius:12px; padding:22px 20px;
+    text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    border-top:4px solid #1a73e8;
   }
-  .metric-card.green  { border-color: #34a853; }
-  .metric-card.yellow { border-color: #fbbc04; }
-  .metric-card.red    { border-color: #ea4335; }
-  .metric-value { font-size: 2.4rem; font-weight: 700; color: #1a73e8; }
-  .metric-card.green  .metric-value { color: #34a853; }
-  .metric-card.yellow .metric-value { color: #fbbc04; }
-  .metric-card.red    .metric-value { color: #ea4335; }
-  .metric-label { font-size: 0.8rem; color: #666; margin-top: 6px; }
+  .card.green  { border-color:#34a853; }
+  .card.orange { border-color:#fb8c00; }
+  .card.red    { border-color:#ea4335; }
+  .card-val  { font-size:2.4rem; font-weight:700; color:#1a73e8; line-height:1.1; }
+  .card.green  .card-val { color:#34a853; }
+  .card.orange .card-val { color:#fb8c00; }
+  .card.red    .card-val { color:#ea4335; }
+  .card-label { font-size:0.8rem; color:#666; margin-top:6px; }
 
-  /* ── SECTION TITLE ── */
-  .section-title { font-size: 1rem; font-weight: 700; color: #1a73e8; margin-bottom: 12px; }
+  .sec { font-size:1rem; font-weight:700; color:#1a73e8;
+         border-bottom:2px solid #e8f0fe; padding-bottom:6px; margin:24px 0 14px; }
 
-  /* ── FILTERS ── */
+  .chart-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; margin-bottom:24px; }
+  .chart-box {
+    background:white; border-radius:12px; padding:18px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  }
+  .chart-box h4 { font-size:0.88rem; font-weight:600; color:#333; margin-bottom:10px; }
+  .chart-box canvas { max-height:240px; }
+
+  .prog-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; }
+  .prog-box {
+    background:white; border-radius:12px; padding:18px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  }
+  .prog-title { font-size:0.85rem; font-weight:600; color:#333; margin-bottom:8px; }
+  .prog-bar-bg { background:#e8eaed; border-radius:8px; height:14px; overflow:hidden; margin-bottom:6px; }
+  .prog-bar-fill { height:100%; border-radius:8px; transition:width 1s ease; }
+  .prog-meta { font-size:0.75rem; color:#666; }
+  .prog-pct { float:right; font-weight:700; }
+
+  .table-wrap { background:white; border-radius:12px; overflow:hidden;
+                box-shadow:0 2px 8px rgba(0,0,0,0.06); margin-bottom:16px; overflow-x:auto; }
   .filter-bar {
-    background: white; border-radius: 10px; padding: 14px 18px;
-    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
-    margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    background:white; border-radius:10px; padding:14px 18px;
+    display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;
+    margin-bottom:14px; box-shadow:0 1px 4px rgba(0,0,0,0.06);
   }
+  .filter-bar label { font-size:0.75rem; color:#666; display:block; margin-bottom:3px; }
   .filter-bar select, .filter-bar input {
-    padding: 7px 12px; border: 1px solid #ddd; border-radius: 6px;
-    font-size: 0.85rem; color: #333; background: #fafafa; min-width: 140px;
+    padding:7px 10px; border:1px solid #ddd; border-radius:6px;
+    font-size:0.82rem; color:#333; min-width:130px;
   }
-  .filter-bar label { font-size: 0.8rem; color: #666; }
-
-  /* ── TABLE ── */
-  .table-wrap {
-    background: white; border-radius: 12px; overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 24px;
-  }
-  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  table { width:100%; border-collapse:collapse; font-size:0.81rem; }
   thead th {
-    background: #1a73e8; color: white; padding: 11px 12px;
-    text-align: left; font-weight: 600; white-space: nowrap;
+    background:#1a73e8; color:white; padding:10px 12px;
+    text-align:left; font-weight:600; white-space:nowrap;
   }
-  tbody tr:hover { filter: brightness(0.96); cursor: default; }
-  tbody td { padding: 9px 12px; border-bottom: 1px solid #f0f0f0; }
-  .badge {
-    padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;
-    font-weight: 600; white-space: nowrap;
-  }
-  .badge-green  { background: #C6EFCE; color: #276221; }
-  .badge-yellow { background: #FFEB9C; color: #7D6608; }
-  .badge-red    { background: #FFC7CE; color: #9C0006; }
-  .badge-blue   { background: #E8F0FE; color: #1a73e8; }
-  .row-green  { background: #f0faf0; }
-  .row-yellow { background: #fffde7; }
-  .row-red    { background: #fff5f5; }
+  tbody td { padding:8px 12px; border-bottom:1px solid #f0f0f0; white-space:nowrap; }
+  .row-green  { background:#f0faf0; }
+  .row-yellow { background:#fffde7; }
+  .row-red    { background:#fff5f5; }
+  .badge { padding:2px 9px; border-radius:10px; font-size:0.75rem; font-weight:600; }
+  .b-done { background:#C6EFCE; color:#276221; }
+  .b-pend { background:#FFE0B2; color:#7D3C00; }
+  .b-sent { background:#C6EFCE; color:#276221; }
+  .b-wait { background:#E3F2FD; color:#1565C0; }
+  .b-nudge{ background:#E8F0FE; color:#1a73e8; font-size:0.72rem; }
+  .b-re   { background:#FFCDD2; color:#B71C1C; font-size:0.72rem; }
+  .b-con  { background:#C8E6C9; color:#1B5E20; font-size:0.72rem; }
+  #tcount { font-size:0.78rem; color:#666; margin-top:-8px; margin-bottom:18px; }
+  .legend { font-size:0.78rem; color:#666; display:flex; gap:18px; flex-wrap:wrap; }
 
-  /* ── CHARTS ── */
-  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-  .chart-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-  .chart-card {
-    background: white; border-radius: 12px; padding: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  }
-  .chart-card canvas { max-height: 280px; }
-
-  /* ── LOADING ── */
   #loading {
-    position: fixed; inset: 0; background: rgba(255,255,255,0.92);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    z-index: 999; gap: 16px;
+    position:fixed; inset:0; background:rgba(255,255,255,0.93);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    z-index:999; gap:14px;
   }
-  .spinner {
-    width: 44px; height: 44px; border: 4px solid #e0e0e0;
-    border-top-color: #1a73e8; border-radius: 50%; animation: spin 0.8s linear infinite;
+  .spin {
+    width:42px; height:42px; border:4px solid #e0e0e0;
+    border-top-color:#1a73e8; border-radius:50%;
+    animation:spin 0.8s linear infinite;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 768px) {
-    .metric-grid { grid-template-columns: 1fr 1fr; }
-    .chart-grid, .chart-grid-3 { grid-template-columns: 1fr; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  @media(max-width:768px) {
+    .metric-grid,.chart-row,.prog-row { grid-template-columns:1fr; }
   }
 </style>
 </head>
 <body>
 
-<!-- Loading -->
 <div id="loading">
-  <div class="spinner"></div>
-  <p style="color:#666;font-size:0.9rem">Google Sheet se data load ho raha hai...</p>
+  <div class="spin"></div>
+  <p style="color:#666;font-size:0.88rem">Data load ho raha hai...</p>
 </div>
 
-<!-- Nav -->
 <nav>
-  <h1>🎯 Udhyam AI Nudge Dashboard</h1>
+  <h1>&#127919; Udhyam AI Nudge Dashboard</h1>
   <div class="tabs">
-    <button class="tab active" onclick="showPage('overview')">📊 Overview</button>
-    <button class="tab" onclick="showPage('analytics')">📈 Analytics</button>
-    <button class="tab" onclick="showPage('nudges')">📤 Nudge List</button>
+    <button class="tab active" onclick="showPage('home',this)">&#127968; Home</button>
+    <button class="tab"        onclick="showPage('list',this)">&#128203; Nudge List</button>
   </div>
-  <span id="last-updated"></span>
+  <span id="ts"></span>
 </nav>
 
-<!-- ══ PAGE 1: OVERVIEW ══════════════════════════════════════ -->
-<div class="page active" id="page-overview">
-
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
   <div class="metric-grid" id="metrics"></div>
-
-  <div class="filter-bar">
-    <div><label>State</label><br>
-      <select id="f-state" onchange="renderTable()">
-        <option value="">All States</option>
-      </select>
-    </div>
-    <div><label>Business Type</label><br>
-      <select id="f-btype" onchange="renderTable()">
-        <option value="">All Types</option>
-      </select>
-    </div>
-    <div><label>Nudge Required</label><br>
-      <select id="f-nudge" onchange="renderTable()">
-        <option value="">All</option>
-        <option value="Yes">Yes</option>
-        <option value="No">No</option>
-      </select>
-    </div>
-    <div><label>Search Name</label><br>
-      <input type="text" id="f-search" placeholder="Student name..." oninput="renderTable()">
-    </div>
+  <div class="sec">&#128202; Analytics</div>
+  <div class="chart-row">
+    <div class="chart-box"><h4>Nudge Type Distribution</h4><canvas id="c-nudge"></canvas></div>
+    <div class="chart-box"><h4>Students by State</h4><canvas id="c-state"></canvas></div>
+    <div class="chart-box"><h4>Students by Business Type</h4><canvas id="c-btype"></canvas></div>
   </div>
+  <div class="sec">&#128221; Submission Progress</div>
+  <div class="prog-row" id="prog-row"></div>
+</div>
 
+<!-- NUDGE LIST PAGE -->
+<div class="page" id="page-list">
+  <div class="filter-bar">
+    <div><label>State</label>
+      <select id="f-state" onchange="renderTable()"><option value="">All States</option></select></div>
+    <div><label>Business Type</label>
+      <select id="f-btype" onchange="renderTable()"><option value="">All Types</option></select></div>
+    <div><label>Nudge Type</label>
+      <select id="f-ntype" onchange="renderTable()"><option value="">All</option></select></div>
+    <div><label>Search Name</label>
+      <input type="text" id="f-search" placeholder="Student name..." oninput="renderTable()"></div>
+  </div>
+  <p id="tcount"></p>
   <div class="table-wrap">
-    <table id="student-table">
+    <table>
       <thead>
         <tr>
           <th>ID</th><th>Name</th><th>Class</th><th>State</th>
@@ -177,400 +167,238 @@
           <th>Days Inactive</th><th>Nudge Type</th><th>Nudge Sent</th>
         </tr>
       </thead>
-      <tbody id="table-body"></tbody>
+      <tbody id="tbody"></tbody>
     </table>
   </div>
-  <p id="table-count" style="font-size:0.8rem;color:#666;margin-top:-16px;margin-bottom:24px;"></p>
-
-  <div style="font-size:0.8rem;color:#666;background:white;padding:12px 16px;border-radius:8px;display:inline-flex;gap:20px;">
-    <span>🟢 On Track</span>
-    <span>🟡 Needs Nudge</span>
-    <span>🔴 Very Inactive (&gt;15 days)</span>
+  <div class="legend">
+    <span>&#129001; On Track (CONGRATULATIONS)</span>
+    <span>&#129000; Needs Reminder</span>
+    <span>&#128997; Reengagement Required</span>
   </div>
-</div>
-
-<!-- ══ PAGE 2: ANALYTICS ═════════════════════════════════════ -->
-<div class="page" id="page-analytics">
-
-  <div class="chart-grid">
-    <div class="chart-card">
-      <div class="section-title">Nudge Type Distribution</div>
-      <canvas id="chart-nudge-type"></canvas>
-    </div>
-    <div class="chart-card">
-      <div class="section-title">Submission Completion</div>
-      <canvas id="chart-submission"></canvas>
-    </div>
-  </div>
-
-  <div class="chart-grid">
-    <div class="chart-card">
-      <div class="section-title">Students by Business Type</div>
-      <canvas id="chart-btype"></canvas>
-    </div>
-    <div class="chart-card">
-      <div class="section-title">Days Inactive Distribution</div>
-      <canvas id="chart-inactive"></canvas>
-    </div>
-  </div>
-
-  <div class="chart-grid">
-    <div class="chart-card">
-      <div class="section-title">State-wise Student Count</div>
-      <canvas id="chart-state"></canvas>
-    </div>
-    <div class="chart-card">
-      <div class="section-title">Nudge Sent vs Pending</div>
-      <canvas id="chart-sent"></canvas>
-    </div>
-  </div>
-</div>
-
-<!-- ══ PAGE 3: NUDGE LIST ════════════════════════════════════ -->
-<div class="page" id="page-nudges">
-
-  <div class="metric-grid" style="grid-template-columns:repeat(3,1fr)" id="nudge-metrics"></div>
-
-  <div class="table-wrap" style="margin-top:16px">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th><th>Name</th><th>State</th>
-          <th>Business Idea</th><th>Nudge Type</th>
-          <th>Days Inactive</th><th>Phone</th>
-        </tr>
-      </thead>
-      <tbody id="nudge-table-body"></tbody>
-    </table>
-  </div>
-  <p style="font-size:0.8rem;color:#888;margin-top:8px">
-    * Yeh list un students ki hai jinhe nudge bhejna baaki hai (nudge_required=Yes, nudge_sent=No)
-  </p>
 </div>
 
 <script>
-// ── CONFIG ────────────────────────────────────────────────────
 const SHEET_ID  = "1ax76tya8w-F5-WEELxVZGleLZwAKExWDgXK9x0cDwrI";
-const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
+const SHEET_CSV = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/export?format=csv&gid=0";
 
-let allStudents = [];
-let charts      = {};
+let students = [];
+let charts   = {};
 
-// ── LOAD DATA ─────────────────────────────────────────────────
-async function loadData() {
-  try {
-    const res  = await fetch(SHEET_CSV);
-    const text = await res.text();
-    allStudents = parseCSV(text);
-  } catch(e) {
-    // Fallback to bundled CSV if sheet not public
-    console.warn("Sheet fetch failed, using bundled data:", e.message);
-    allStudents = FALLBACK_DATA;
+// Robust CSV parser — handles multi-line quoted fields
+function parseCSV(raw) {
+  const rows = [];
+  let row = [], field = '', inQ = false;
+  for (let i = 0; i < raw.length; i++) {
+    const c = raw[i], n = raw[i+1];
+    if (c === '"') {
+      if (inQ && n === '"') { field += '"'; i++; }
+      else inQ = !inQ;
+    } else if (c === ',' && !inQ) {
+      row.push(field); field = '';
+    } else if ((c === '\n' || c === '\r') && !inQ) {
+      if (c === '\r' && n === '\n') i++;
+      row.push(field); field = '';
+      if (row.some(f => f !== '')) rows.push(row);
+      row = [];
+    } else {
+      field += c;
+    }
   }
+  if (row.length) { row.push(field); if (row.some(f=>f)) rows.push(row); }
 
-  document.getElementById("loading").style.display = "none";
-  document.getElementById("last-updated").textContent =
-    "Updated: " + new Date().toLocaleTimeString("hi-IN");
-
-  populateFilters();
-  renderMetrics();
-  renderTable();
-  renderCharts();
-  renderNudgePage();
+  const headers = rows[0].map(h => h.trim());
+  // Only return rows that have a valid student_id (S001 format)
+  return rows.slice(1)
+    .map(r => {
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = (r[i] || '').trim());
+      return obj;
+    })
+    .filter(obj => obj['student_id'] && /^S\d+$/.test(obj['student_id']));
 }
 
-// ── CSV PARSER ────────────────────────────────────────────────
-function parseCSV(text) {
-  const lines = text.trim().split("\n");
-  const headers = lines[0].split(",").map(h => h.trim().replace(/"/g,""));
-  return lines.slice(1).map(line => {
-    const vals = [];
-    let cur = "", inQ = false;
-    for (let c of line) {
-      if (c === '"') { inQ = !inQ; }
-      else if (c === ',' && !inQ) { vals.push(cur.trim()); cur = ""; }
-      else cur += c;
-    }
-    vals.push(cur.trim());
-    const obj = {};
-    headers.forEach((h, i) => obj[h] = (vals[i] || "").replace(/"/g,""));
-    return obj;
+async function init() {
+  try {
+    const res = await fetch(SHEET_CSV);
+    const txt = await res.text();
+    const parsed = parseCSV(txt);
+    students = parsed.length ? parsed : FALLBACK;
+  } catch(e) {
+    students = FALLBACK;
+  }
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('ts').textContent = 'Updated: ' + new Date().toLocaleTimeString('hi-IN');
+  buildFilters();
+  renderMetrics();
+  renderCharts();
+  renderProgress();
+  renderTable();
+}
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function renderMetrics() {
+  const total    = students.length;
+  const onTrack  = students.filter(s => s.nudge_type === 'CONGRATULATIONS').length;
+  const needNudge= students.filter(s => s.nudge_required === 'Yes' && s.nudge_sent === 'No').length;
+  const inactive = students.filter(s => parseInt(s.days_inactive) > 15).length;
+  document.getElementById('metrics').innerHTML =
+    '<div class="card"><div class="card-val">' + total + '</div><div class="card-label">Total Students</div></div>' +
+    '<div class="card green"><div class="card-val">' + onTrack + '</div><div class="card-label">&#9989; On Track</div></div>' +
+    '<div class="card orange"><div class="card-val">' + needNudge + '</div><div class="card-label">&#9888;&#65039; Need Nudge</div></div>' +
+    '<div class="card red"><div class="card-val">' + inactive + '</div><div class="card-label">&#128308; Very Inactive</div></div>';
+}
+
+function mkChart(id, cfg) {
+  if (charts[id]) charts[id].destroy();
+  charts[id] = new Chart(document.getElementById(id), cfg);
+}
+
+function renderCharts() {
+  const nudgeMap = {
+    CONGRATULATIONS:'#34a853', REENGAGEMENT:'#ea4335',
+    IDEA_REMINDER:'#fbbc04', PROTOTYPE_REMINDER:'#1a73e8', PITCH_REMINDER:'#46bdc6'
+  };
+  const ntCnt = {};
+  students.filter(s => s.nudge_type).forEach(s => ntCnt[s.nudge_type] = (ntCnt[s.nudge_type]||0)+1);
+  mkChart('c-nudge', {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(ntCnt).map(k => k.replace(/_/g,' ')),
+      datasets: [{ data: Object.values(ntCnt),
+        backgroundColor: Object.keys(ntCnt).map(k => nudgeMap[k]||'#999') }]
+    },
+    options: { plugins:{legend:{position:'bottom',labels:{font:{size:10}}}}, cutout:'45%' }
+  });
+
+  const stCnt = {};
+  students.forEach(s => stCnt[s.state] = (stCnt[s.state]||0)+1);
+  const stK = Object.keys(stCnt).sort((a,b) => stCnt[a]-stCnt[b]);
+  mkChart('c-state', {
+    type:'bar',
+    data:{ labels:stK, datasets:[{ data:stK.map(k=>stCnt[k]), backgroundColor:'#1a73e8', borderRadius:5 }] },
+    options:{ indexAxis:'y', plugins:{legend:{display:false}}, scales:{ x:{beginAtZero:true} } }
+  });
+
+  const btCnt = {};
+  students.forEach(s => btCnt[s.business_type] = (btCnt[s.business_type]||0)+1);
+  const btK = Object.keys(btCnt).sort((a,b) => btCnt[a]-btCnt[b]);
+  mkChart('c-btype', {
+    type:'bar',
+    data:{ labels:btK, datasets:[{ data:btK.map(k=>btCnt[k]), backgroundColor:'#34a853', borderRadius:5 }] },
+    options:{ indexAxis:'y', plugins:{legend:{display:false}}, scales:{ x:{beginAtZero:true} } }
   });
 }
 
-// ── NAVIGATION ────────────────────────────────────────────────
-function showPage(name) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-  document.getElementById("page-" + name).classList.add("active");
-  event.target.classList.add("active");
+function renderProgress() {
+  const total = students.length;
+  const s1 = students.filter(s => s.submission_1_status === 'Submitted').length;
+  const s2 = students.filter(s => s.submission_2_status === 'Submitted').length;
+  const s3 = students.filter(s => s.submission_3_status === 'Submitted').length;
+  const pct = n => Math.round(n / total * 100);
+  const bars = [
+    {label:'Submission 1 — Business Idea', done:s1, pct:pct(s1), color:'#1a73e8'},
+    {label:'Submission 2 — Prototype',     done:s2, pct:pct(s2), color:'#fb8c00'},
+    {label:'Submission 3 — Pitch',         done:s3, pct:pct(s3), color:'#34a853'},
+  ];
+  document.getElementById('prog-row').innerHTML = bars.map(b =>
+    '<div class="prog-box">' +
+    '<div class="prog-title">' + b.label + '<span class="prog-pct" style="color:' + b.color + '">' + b.pct + '%</span></div>' +
+    '<div class="prog-bar-bg"><div class="prog-bar-fill" style="width:' + b.pct + '%;background:' + b.color + '"></div></div>' +
+    '<div class="prog-meta">' + b.done + ' of ' + total + ' students submitted</div>' +
+    '</div>'
+  ).join('');
 }
 
-// ── FILTERS ───────────────────────────────────────────────────
-function populateFilters() {
-  const states = [...new Set(allStudents.map(s => s.state))].sort();
-  const btypes = [...new Set(allStudents.map(s => s.business_type))].sort();
-  const fState = document.getElementById("f-state");
-  const fBtype = document.getElementById("f-btype");
-  states.forEach(s => { const o = new Option(s, s); fState.add(o); });
-  btypes.forEach(b => { const o = new Option(b, b); fBtype.add(o); });
+function buildFilters() {
+  const add = (id, vals) => vals.forEach(v => {
+    const o = document.createElement('option'); o.value = o.text = v;
+    document.getElementById(id).appendChild(o);
+  });
+  add('f-state', [...new Set(students.map(s=>s.state))].sort());
+  add('f-btype', [...new Set(students.map(s=>s.business_type))].sort());
+  add('f-ntype', [...new Set(students.map(s=>s.nudge_type).filter(Boolean))].sort());
 }
 
-function getFiltered() {
-  const state  = document.getElementById("f-state").value;
-  const btype  = document.getElementById("f-btype").value;
-  const nudge  = document.getElementById("f-nudge").value;
-  const search = document.getElementById("f-search").value.toLowerCase();
-  return allStudents.filter(s =>
+function renderTable() {
+  const state  = document.getElementById('f-state').value;
+  const btype  = document.getElementById('f-btype').value;
+  const ntype  = document.getElementById('f-ntype').value;
+  const search = document.getElementById('f-search').value.toLowerCase();
+  const data = students.filter(s =>
     (!state  || s.state         === state)  &&
     (!btype  || s.business_type === btype)  &&
-    (!nudge  || s.nudge_required=== nudge)  &&
+    (!ntype  || s.nudge_type    === ntype)  &&
     (!search || s.name.toLowerCase().includes(search))
   );
-}
+  document.getElementById('tcount').textContent = 'Showing ' + data.length + ' of ' + students.length + ' students';
 
-// ── METRICS ───────────────────────────────────────────────────
-function renderMetrics() {
-  const total      = allStudents.length;
-  const onTrack    = allStudents.filter(s => s.nudge_type === "CONGRATULATIONS").length;
-  const needNudge  = allStudents.filter(s => s.nudge_required === "Yes" && s.nudge_sent === "No").length;
-  const inactive   = allStudents.filter(s => parseInt(s.days_inactive) > 15).length;
-
-  document.getElementById("metrics").innerHTML = `
-    <div class="metric-card">
-      <div class="metric-value">${total}</div>
-      <div class="metric-label">Total Students</div>
-    </div>
-    <div class="metric-card green">
-      <div class="metric-value">${onTrack}</div>
-      <div class="metric-label">✅ On Track</div>
-    </div>
-    <div class="metric-card yellow">
-      <div class="metric-value">${needNudge}</div>
-      <div class="metric-label">🟡 Need Nudge</div>
-    </div>
-    <div class="metric-card red">
-      <div class="metric-value">${inactive}</div>
-      <div class="metric-label">🔴 Very Inactive</div>
-    </div>`;
-}
-
-// ── TABLE ─────────────────────────────────────────────────────
-function renderTable() {
-  const data = getFiltered();
-  const tbody = document.getElementById("table-body");
-
-  function subBadge(val) {
-    return val === "Submitted"
-      ? `<span class="badge badge-green">✓ Done</span>`
-      : `<span class="badge badge-yellow">Pending</span>`;
-  }
-  function rowClass(s) {
-    if (s.nudge_type === "CONGRATULATIONS") return "row-green";
-    if (parseInt(s.days_inactive) > 15)    return "row-red";
-    if (s.nudge_required === "Yes")        return "row-yellow";
-    return "row-green";
-  }
-  function nudgeBadge(type) {
-    const map = {
-      CONGRATULATIONS:   "badge-green",
-      REENGAGEMENT:      "badge-red",
-      IDEA_REMINDER:     "badge-yellow",
-      PROTOTYPE_REMINDER:"badge-blue",
-      PITCH_REMINDER:    "badge-blue",
-    };
-    return type ? `<span class="badge ${map[type]||'badge-blue'}">${type.replace(/_/g,' ')}</span>` : "—";
-  }
-
-  tbody.innerHTML = data.map(s => `
-    <tr class="${rowClass(s)}">
-      <td><strong>${s.student_id}</strong></td>
-      <td>${s.name}</td>
-      <td>${s.class}</td>
-      <td>${s.state}</td>
-      <td>${s.business_type}</td>
-      <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${s.business_idea}">${s.business_idea}</td>
-      <td>${subBadge(s.submission_1_status)}</td>
-      <td>${subBadge(s.submission_2_status)}</td>
-      <td>${subBadge(s.submission_3_status)}</td>
-      <td><strong style="color:${parseInt(s.days_inactive)>15?'#ea4335':parseInt(s.days_inactive)>7?'#fbbc04':'#34a853'}">${s.days_inactive}d</strong></td>
-      <td>${nudgeBadge(s.nudge_type)}</td>
-      <td>${s.nudge_sent === "Yes" ? '<span class="badge badge-green">Sent ✓</span>' : '<span class="badge badge-yellow">Pending</span>'}</td>
-    </tr>`).join("");
-
-  document.getElementById("table-count").textContent = `Showing ${data.length} of ${allStudents.length} students`;
-}
-
-// ── CHARTS ────────────────────────────────────────────────────
-function renderCharts() {
-  const COLORS = ["#1a73e8","#34a853","#fbbc04","#ea4335","#46bdc6","#9c27b0"];
-
-  function makeChart(id, config) {
-    if (charts[id]) charts[id].destroy();
-    const ctx = document.getElementById(id).getContext("2d");
-    charts[id] = new Chart(ctx, config);
-  }
-
-  // 1. Nudge type bar
-  const nudgeCounts = {};
-  allStudents.filter(s=>s.nudge_required==="Yes").forEach(s => {
-    nudgeCounts[s.nudge_type] = (nudgeCounts[s.nudge_type]||0) + 1;
-  });
-  const nudgeColors = {
-    REENGAGEMENT:"#ea4335", IDEA_REMINDER:"#fbbc04",
-    PROTOTYPE_REMINDER:"#1a73e8", PITCH_REMINDER:"#34a853", CONGRATULATIONS:"#46bdc6"
+  const sub  = v => v==='Submitted' ? '<span class="badge b-done">&#9989; Done</span>' : '<span class="badge b-pend">&#128308; Pending</span>';
+  const sent = v => v==='Yes'       ? '<span class="badge b-sent">&#9989; Sent</span>' : '<span class="badge b-wait">&#9203; Pending</span>';
+  const days = d => {
+    d = parseInt(d)||0;
+    const c = d<7 ? '#34a853' : d<=15 ? '#fb8c00' : '#ea4335';
+    return '<strong style="color:' + c + '">' + d + 'd</strong>';
   };
-  makeChart("chart-nudge-type", {
-    type: "bar",
-    data: {
-      labels: Object.keys(nudgeCounts).map(k=>k.replace(/_/g," ")),
-      datasets: [{ data: Object.values(nudgeCounts),
-        backgroundColor: Object.keys(nudgeCounts).map(k=>nudgeColors[k]||"#999"),
-        borderRadius: 6 }]
-    },
-    options: { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}} }
-  });
-
-  // 2. Submission pie
-  const allDone    = allStudents.filter(s=>s.submission_1_status==="Submitted"&&s.submission_2_status==="Submitted"&&s.submission_3_status==="Submitted").length;
-  const s1only     = allStudents.filter(s=>s.submission_1_status==="Submitted"&&s.submission_2_status!=="Submitted").length;
-  const s1s2       = allStudents.filter(s=>s.submission_1_status==="Submitted"&&s.submission_2_status==="Submitted"&&s.submission_3_status!=="Submitted").length;
-  const notStarted = allStudents.filter(s=>s.submission_1_status!=="Submitted").length;
-  makeChart("chart-submission", {
-    type: "doughnut",
-    data: {
-      labels: ["All 3 Done","Idea Only","Idea+Prototype","Not Started"],
-      datasets: [{ data:[allDone,s1only,s1s2,notStarted],
-        backgroundColor:["#34a853","#fbbc04","#1a73e8","#ea4335"] }]
-    },
-    options: { plugins:{legend:{position:"bottom"}} }
-  });
-
-  // 3. Business type bar (stacked)
-  const btypes   = [...new Set(allStudents.map(s=>s.business_type))].sort();
-  const needData = btypes.map(b=>allStudents.filter(s=>s.business_type===b&&s.nudge_required==="Yes").length);
-  const okData   = btypes.map(b=>allStudents.filter(s=>s.business_type===b&&s.nudge_required!=="Yes").length);
-  makeChart("chart-btype", {
-    type: "bar",
-    data: {
-      labels: btypes,
-      datasets: [
-        { label:"Needs Nudge", data:needData, backgroundColor:"#ea4335", borderRadius:4 },
-        { label:"On Track",    data:okData,   backgroundColor:"#34a853", borderRadius:4 }
-      ]
-    },
-    options: { scales:{ x:{stacked:true}, y:{stacked:true, beginAtZero:true} }, plugins:{legend:{position:"bottom"}} }
-  });
-
-  // 4. Days inactive histogram
-  const bins  = [0,3,7,10,15,20,30];
-  const bLabels = bins.slice(0,-1).map((b,i)=>`${b}-${bins[i+1]}d`);
-  const bData   = bins.slice(0,-1).map((b,i)=>
-    allStudents.filter(s=>parseInt(s.days_inactive)>=b&&parseInt(s.days_inactive)<bins[i+1]).length
-  );
-  makeChart("chart-inactive", {
-    type: "bar",
-    data: {
-      labels: bLabels,
-      datasets: [{ data:bData,
-        backgroundColor:["#34a853","#34a853","#fbbc04","#fbbc04","#ea4335","#ea4335"],
-        borderRadius:6 }]
-    },
-    options: { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}} }
-  });
-
-  // 5. State bar
-  const stateCount = {};
-  allStudents.forEach(s=>{ stateCount[s.state]=(stateCount[s.state]||0)+1; });
-  makeChart("chart-state", {
-    type: "bar",
-    data: {
-      labels: Object.keys(stateCount),
-      datasets: [{ data:Object.values(stateCount), backgroundColor:COLORS, borderRadius:6 }]
-    },
-    options: { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}} }
-  });
-
-  // 6. Sent vs Pending donut
-  const nudgeYes  = allStudents.filter(s=>s.nudge_required==="Yes");
-  const sentCount = nudgeYes.filter(s=>s.nudge_sent==="Yes").length;
-  const pendCount = nudgeYes.filter(s=>s.nudge_sent==="No").length;
-  makeChart("chart-sent", {
-    type: "doughnut",
-    data: {
-      labels: ["Sent ✅","Pending 🟡"],
-      datasets: [{ data:[sentCount,pendCount], backgroundColor:["#34a853","#fbbc04"] }]
-    },
-    options: { plugins:{legend:{position:"bottom"}} }
-  });
-}
-
-// ── NUDGE PAGE ────────────────────────────────────────────────
-function renderNudgePage() {
-  const pending = allStudents.filter(s=>s.nudge_required==="Yes" && s.nudge_sent==="No");
-  const sent    = allStudents.filter(s=>s.nudge_sent==="Yes").length;
-
-  document.getElementById("nudge-metrics").innerHTML = `
-    <div class="metric-card yellow">
-      <div class="metric-value">${pending.length}</div>
-      <div class="metric-label">🟡 Nudge Pending</div>
-    </div>
-    <div class="metric-card green">
-      <div class="metric-value">${sent}</div>
-      <div class="metric-label">✅ Nudge Sent</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-value">${allStudents.filter(s=>s.nudge_required==="Yes").length}</div>
-      <div class="metric-label">Total Eligible</div>
-    </div>`;
-
-  const nudgeColors = {
-    REENGAGEMENT:"badge-red", IDEA_REMINDER:"badge-yellow",
-    PROTOTYPE_REMINDER:"badge-blue", PITCH_REMINDER:"badge-blue"
+  const nbadge = t => {
+    if (!t) return '&mdash;';
+    const cls = t==='CONGRATULATIONS' ? 'b-con' : t==='REENGAGEMENT' ? 'b-re' : 'b-nudge';
+    return '<span class="badge ' + cls + '">' + t.replace(/_/g,' ') + '</span>';
   };
-  document.getElementById("nudge-table-body").innerHTML = pending.map(s=>`
-    <tr class="row-yellow">
-      <td><strong>${s.student_id}</strong></td>
-      <td>${s.name}</td>
-      <td>${s.state}</td>
-      <td style="max-width:180px">${s.business_idea}</td>
-      <td><span class="badge ${nudgeColors[s.nudge_type]||'badge-blue'}">${(s.nudge_type||"").replace(/_/g," ")}</span></td>
-      <td><strong style="color:${parseInt(s.days_inactive)>15?'#ea4335':'#fbbc04'}">${s.days_inactive}d</strong></td>
-      <td>${s.phone_number||"—"}</td>
-    </tr>`).join("");
+  const rowCls = s => s.nudge_type==='CONGRATULATIONS' ? 'row-green' : s.nudge_type==='REENGAGEMENT' ? 'row-red' : s.nudge_type ? 'row-yellow' : 'row-green';
+
+  document.getElementById('tbody').innerHTML = data.map(s =>
+    '<tr class="' + rowCls(s) + '">' +
+    '<td><strong>' + s.student_id + '</strong></td>' +
+    '<td>' + s.name + '</td>' +
+    '<td>' + s.class + '</td>' +
+    '<td>' + s.state + '</td>' +
+    '<td>' + s.business_type + '</td>' +
+    '<td style="max-width:150px;overflow:hidden;text-overflow:ellipsis" title="' + s.business_idea + '">' + s.business_idea + '</td>' +
+    '<td>' + sub(s.submission_1_status) + '</td>' +
+    '<td>' + sub(s.submission_2_status) + '</td>' +
+    '<td>' + sub(s.submission_3_status) + '</td>' +
+    '<td>' + days(s.days_inactive) + '</td>' +
+    '<td>' + nbadge(s.nudge_type) + '</td>' +
+    '<td>' + sent(s.nudge_sent) + '</td>' +
+    '</tr>'
+  ).join('');
 }
 
-// ── FALLBACK DATA (if Sheet not public) ───────────────────────
-const FALLBACK_DATA = [
-  {student_id:"S001",name:"Rahul Kumar",class:"11",state:"UP",business_type:"Food",business_idea:"Homemade Achaar & Murabba",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Submitted",days_inactive:"0",nudge_required:"No",nudge_type:"CONGRATULATIONS",nudge_sent:"No",phone_number:"+917054411333"},
-  {student_id:"S002",name:"Priya Sharma",class:"12",state:"Bihar",business_type:"Handicraft",business_idea:"Bamboo Furniture Making",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Submitted",days_inactive:"1",nudge_required:"No",nudge_type:"CONGRATULATIONS",nudge_sent:"No",phone_number:"+919876543210"},
-  {student_id:"S003",name:"Amit Singh",class:"11",state:"MP",business_type:"Agriculture",business_idea:"Organic Vegetable Farming",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Submitted",days_inactive:"2",nudge_required:"No",nudge_type:"CONGRATULATIONS",nudge_sent:"No",phone_number:"+918765432109"},
-  {student_id:"S004",name:"Sunita Devi",class:"12",state:"Rajasthan",business_type:"Services",business_idea:"Mobile Repair Shop",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"6",nudge_required:"No",nudge_type:"",nudge_sent:"No",phone_number:"+917654321098"},
-  {student_id:"S005",name:"Vikram Yadav",class:"11",state:"Jharkhand",business_type:"Retail",business_idea:"Kirana Store",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"5",nudge_required:"No",nudge_type:"",nudge_sent:"No",phone_number:"+916543210987"},
-  {student_id:"S006",name:"Anjali Gupta",class:"12",state:"UP",business_type:"Food",business_idea:"Millet Cookies & Snacks",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"6",nudge_required:"No",nudge_type:"",nudge_sent:"No",phone_number:"+915432109876"},
-  {student_id:"S007",name:"Ravi Verma",class:"11",state:"Bihar",business_type:"Handicraft",business_idea:"Clay Pottery & Diyas",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"9",nudge_required:"Yes",nudge_type:"PROTOTYPE_REMINDER",nudge_sent:"No",phone_number:"+914321098765"},
-  {student_id:"S008",name:"Pooja Kumari",class:"12",state:"MP",business_type:"Agriculture",business_idea:"Mushroom Cultivation",submission_1_status:"Not Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"17",nudge_required:"Yes",nudge_type:"REENGAGEMENT",nudge_sent:"No",phone_number:"+913210987654"},
-  {student_id:"S009",name:"Suresh Patel",class:"11",state:"Rajasthan",business_type:"Services",business_idea:"Tailoring & Stitching",submission_1_status:"Not Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"13",nudge_required:"Yes",nudge_type:"IDEA_REMINDER",nudge_sent:"No",phone_number:"+912109876543"},
-  {student_id:"S010",name:"Kavita Tiwari",class:"12",state:"Jharkhand",business_type:"Retail",business_idea:"Stationery Shop",submission_1_status:"Not Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"21",nudge_required:"Yes",nudge_type:"REENGAGEMENT",nudge_sent:"No",phone_number:"+911098765432"},
-  {student_id:"S011",name:"Deepak Chauhan",class:"11",state:"UP",business_type:"Food",business_idea:"Organic Masala Blends",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Submitted",days_inactive:"0",nudge_required:"No",nudge_type:"CONGRATULATIONS",nudge_sent:"No",phone_number:"+917054411333"},
-  {student_id:"S012",name:"Rekha Rani",class:"12",state:"Bihar",business_type:"Handicraft",business_idea:"Jute Bag Stitching",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"5",nudge_required:"No",nudge_type:"",nudge_sent:"No",phone_number:"+919876543211"},
-  {student_id:"S013",name:"Manish Joshi",class:"11",state:"MP",business_type:"Agriculture",business_idea:"Honey Bee Keeping",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Submitted",days_inactive:"1",nudge_required:"No",nudge_type:"CONGRATULATIONS",nudge_sent:"No",phone_number:"+918765432108"},
-  {student_id:"S014",name:"Seema Mishra",class:"12",state:"Rajasthan",business_type:"Services",business_idea:"Tuition Centre",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"7",nudge_required:"No",nudge_type:"",nudge_sent:"No",phone_number:"+917654321097"},
-  {student_id:"S015",name:"Arun Pandey",class:"11",state:"Jharkhand",business_type:"Retail",business_idea:"Vegetable Vendor",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"6",nudge_required:"No",nudge_type:"",nudge_sent:"No",phone_number:"+916543210986"},
-  {student_id:"S016",name:"Nisha Rajput",class:"12",state:"UP",business_type:"Food",business_idea:"Homemade Ghee & Butter",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"9",nudge_required:"Yes",nudge_type:"PROTOTYPE_REMINDER",nudge_sent:"No",phone_number:"+917054411333"},
-  {student_id:"S017",name:"Rohit Sinha",class:"11",state:"Bihar",business_type:"Handicraft",business_idea:"Block Print Fabric",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Not Submitted",days_inactive:"6",nudge_required:"No",nudge_type:"",nudge_sent:"No",phone_number:"+919876543212"},
-  {student_id:"S018",name:"Geeta Maurya",class:"12",state:"MP",business_type:"Agriculture",business_idea:"Aloe Vera Farming",submission_1_status:"Not Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"24",nudge_required:"Yes",nudge_type:"REENGAGEMENT",nudge_sent:"No",phone_number:"+918765432107"},
-  {student_id:"S019",name:"Sanjay Nishad",class:"11",state:"Rajasthan",business_type:"Services",business_idea:"Cycle Repair Shop",submission_1_status:"Not Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"13",nudge_required:"Yes",nudge_type:"IDEA_REMINDER",nudge_sent:"No",phone_number:"+917054411333"},
-  {student_id:"S020",name:"Lata Bind",class:"12",state:"Jharkhand",business_type:"Retail",business_idea:"Second-hand Books Shop",submission_1_status:"Not Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"19",nudge_required:"Yes",nudge_type:"REENGAGEMENT",nudge_sent:"No",phone_number:"+916543210985"},
-  {student_id:"S021",name:"Pankaj Tripathi",class:"11",state:"UP",business_type:"Food",business_idea:"Street Food Stall",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Submitted",days_inactive:"2",nudge_required:"No",nudge_type:"CONGRATULATIONS",nudge_sent:"No",phone_number:"+915432109875"},
-  {student_id:"S022",name:"Savita Pal",class:"12",state:"Bihar",business_type:"Handicraft",business_idea:"Embroidery Work",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"5",nudge_required:"No",nudge_type:"",nudge_sent:"No",phone_number:"+914321098764"},
-  {student_id:"S023",name:"Dinesh Rawat",class:"11",state:"MP",business_type:"Agriculture",business_idea:"Maize & Wheat Trading",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Submitted",days_inactive:"1",nudge_required:"No",nudge_type:"CONGRATULATIONS",nudge_sent:"No",phone_number:"+913210987653"},
-  {student_id:"S024",name:"Usha Devi",class:"12",state:"Rajasthan",business_type:"Services",business_idea:"Beauty Parlour",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"6",nudge_required:"No",nudge_type:"",nudge_sent:"No",phone_number:"+912109876542"},
-  {student_id:"S025",name:"Hemant Lodhi",class:"11",state:"Jharkhand",business_type:"Retail",business_idea:"Agri Input Store",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"12",nudge_required:"Yes",nudge_type:"PROTOTYPE_REMINDER",nudge_sent:"No",phone_number:"+917054411333"}
+const FALLBACK = [
+  {student_id:"S001",name:"Rahul Kumar",class:"11",state:"UP",business_type:"Food",business_idea:"Homemade Achaar & Murabba",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Submitted",days_inactive:"0",nudge_required:"No",nudge_type:"CONGRATULATIONS",nudge_sent:"No"},
+  {student_id:"S002",name:"Priya Sharma",class:"12",state:"Bihar",business_type:"Handicraft",business_idea:"Bamboo Furniture Making",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Submitted",days_inactive:"1",nudge_required:"No",nudge_type:"CONGRATULATIONS",nudge_sent:"No"},
+  {student_id:"S003",name:"Amit Singh",class:"11",state:"MP",business_type:"Agriculture",business_idea:"Organic Vegetable Farming",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Submitted",days_inactive:"2",nudge_required:"No",nudge_type:"CONGRATULATIONS",nudge_sent:"No"},
+  {student_id:"S004",name:"Sunita Devi",class:"12",state:"Rajasthan",business_type:"Services",business_idea:"Mobile Repair Shop",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"6",nudge_required:"No",nudge_type:"",nudge_sent:"No"},
+  {student_id:"S005",name:"Vikram Yadav",class:"11",state:"Jharkhand",business_type:"Retail",business_idea:"Kirana Store",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"5",nudge_required:"No",nudge_type:"",nudge_sent:"No"},
+  {student_id:"S006",name:"Anjali Gupta",class:"12",state:"UP",business_type:"Food",business_idea:"Millet Cookies & Snacks",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"6",nudge_required:"No",nudge_type:"",nudge_sent:"No"},
+  {student_id:"S007",name:"Ravi Verma",class:"11",state:"Bihar",business_type:"Handicraft",business_idea:"Clay Pottery & Diyas",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"9",nudge_required:"Yes",nudge_type:"PROTOTYPE_REMINDER",nudge_sent:"No"},
+  {student_id:"S008",name:"Pooja Kumari",class:"12",state:"MP",business_type:"Agriculture",business_idea:"Mushroom Cultivation",submission_1_status:"Not Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"17",nudge_required:"Yes",nudge_type:"REENGAGEMENT",nudge_sent:"No"},
+  {student_id:"S009",name:"Suresh Patel",class:"11",state:"Rajasthan",business_type:"Services",business_idea:"Tailoring & Stitching",submission_1_status:"Not Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"13",nudge_required:"Yes",nudge_type:"IDEA_REMINDER",nudge_sent:"No"},
+  {student_id:"S010",name:"Kavita Tiwari",class:"12",state:"Jharkhand",business_type:"Retail",business_idea:"Stationery Shop",submission_1_status:"Not Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"21",nudge_required:"Yes",nudge_type:"REENGAGEMENT",nudge_sent:"No"},
+  {student_id:"S011",name:"Deepak Chauhan",class:"11",state:"UP",business_type:"Food",business_idea:"Organic Masala Blends",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Submitted",days_inactive:"0",nudge_required:"No",nudge_type:"CONGRATULATIONS",nudge_sent:"No"},
+  {student_id:"S012",name:"Rekha Rani",class:"12",state:"Bihar",business_type:"Handicraft",business_idea:"Jute Bag Stitching",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"5",nudge_required:"No",nudge_type:"",nudge_sent:"No"},
+  {student_id:"S013",name:"Manish Joshi",class:"11",state:"MP",business_type:"Agriculture",business_idea:"Honey Bee Keeping",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Submitted",days_inactive:"1",nudge_required:"No",nudge_type:"CONGRATULATIONS",nudge_sent:"No"},
+  {student_id:"S014",name:"Seema Mishra",class:"12",state:"Rajasthan",business_type:"Services",business_idea:"Tuition Centre",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"8",nudge_required:"Yes",nudge_type:"PROTOTYPE_REMINDER",nudge_sent:"No"},
+  {student_id:"S015",name:"Arun Pandey",class:"11",state:"Jharkhand",business_type:"Retail",business_idea:"Vegetable Vendor",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"9",nudge_required:"Yes",nudge_type:"PROTOTYPE_REMINDER",nudge_sent:"No"},
+  {student_id:"S016",name:"Nisha Rajput",class:"12",state:"UP",business_type:"Food",business_idea:"Homemade Ghee & Butter",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"9",nudge_required:"Yes",nudge_type:"PROTOTYPE_REMINDER",nudge_sent:"No"},
+  {student_id:"S017",name:"Rohit Sinha",class:"11",state:"Bihar",business_type:"Handicraft",business_idea:"Block Print Fabric",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Not Submitted",days_inactive:"11",nudge_required:"Yes",nudge_type:"PROTOTYPE_REMINDER",nudge_sent:"No"},
+  {student_id:"S018",name:"Geeta Maurya",class:"12",state:"MP",business_type:"Agriculture",business_idea:"Aloe Vera Farming",submission_1_status:"Not Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"24",nudge_required:"Yes",nudge_type:"REENGAGEMENT",nudge_sent:"No"},
+  {student_id:"S019",name:"Sanjay Nishad",class:"11",state:"Rajasthan",business_type:"Services",business_idea:"Cycle Repair Shop",submission_1_status:"Not Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"13",nudge_required:"Yes",nudge_type:"IDEA_REMINDER",nudge_sent:"No"},
+  {student_id:"S020",name:"Lata Bind",class:"12",state:"Jharkhand",business_type:"Retail",business_idea:"Second-hand Books Shop",submission_1_status:"Not Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"19",nudge_required:"Yes",nudge_type:"REENGAGEMENT",nudge_sent:"No"},
+  {student_id:"S021",name:"Pankaj Tripathi",class:"11",state:"UP",business_type:"Food",business_idea:"Street Food Stall",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Submitted",days_inactive:"2",nudge_required:"No",nudge_type:"CONGRATULATIONS",nudge_sent:"No"},
+  {student_id:"S022",name:"Savita Pal",class:"12",state:"Bihar",business_type:"Handicraft",business_idea:"Embroidery Work",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Submitted",days_inactive:"0",nudge_required:"No",nudge_type:"CONGRATULATIONS",nudge_sent:"No"},
+  {student_id:"S023",name:"Dinesh Rawat",class:"11",state:"MP",business_type:"Agriculture",business_idea:"Maize & Wheat Trading",submission_1_status:"Submitted",submission_2_status:"Submitted",submission_3_status:"Submitted",days_inactive:"1",nudge_required:"No",nudge_type:"CONGRATULATIONS",nudge_sent:"No"},
+  {student_id:"S024",name:"Usha Devi",class:"12",state:"Rajasthan",business_type:"Services",business_idea:"Beauty Parlour",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"9",nudge_required:"Yes",nudge_type:"PROTOTYPE_REMINDER",nudge_sent:"No"},
+  {student_id:"S025",name:"Hemant Lodhi",class:"11",state:"Jharkhand",business_type:"Retail",business_idea:"Agri Input Store",submission_1_status:"Submitted",submission_2_status:"Not Submitted",submission_3_status:"Not Submitted",days_inactive:"12",nudge_required:"Yes",nudge_type:"PITCH_REMINDER",nudge_sent:"No"}
 ];
 
-// ── START ─────────────────────────────────────────────────────
-loadData();
+init();
 </script>
 </body>
 </html>
