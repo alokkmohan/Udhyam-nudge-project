@@ -1,0 +1,26 @@
+student_id,name,class,state,business_type,business_idea,registration_date,submission_1_status,submission_1_date,submission_2_status,submission_2_date,submission_3_status,submission_3_date,last_active_date,days_inactive,nudge_required,nudge_type,nudge_sent,phone_number,nudge_sent_date,next_nudge_date,last_message,nudge_count
+S001,Rahul Kumar,11,UP,Food,Homemade Achaar & Murabba,2026-05-21,Submitted,2026-05-23,Submitted,2026-05-30,Submitted,2026-06-05,2026-06-21,1,No,CONGRATULATIONS,No,+917054411333,,,,0
+S002,Priya Sharma,11,Jharkhand,Handicraft,Bamboo Furniture Making,2026-05-11,Submitted,2026-05-12,Submitted,2026-05-19,Submitted,2026-05-27,2026-06-22,0,No,CONGRATULATIONS,No,+919876543210,,,,0
+S003,Amit Singh,11,Jharkhand,Agriculture,Organic Vegetable Farming,2026-04-30,Submitted,2026-05-05,Submitted,2026-05-09,Submitted,2026-05-19,2026-06-22,0,No,CONGRATULATIONS,No,+918765432109,,,,0
+S004,Sunita Devi,12,Bihar,Services,Mobile Repair Shop,2026-05-10,Submitted,2026-05-12,Not Submitted,,Not Submitted,,2026-06-18,4,No,,No,+917654321098,,,,0
+S005,Vikram Yadav,12,MP,Retail,Kirana Store,2026-05-21,Submitted,2026-05-22,Submitted,2026-05-29,Submitted,2026-06-08,2026-06-13,9,No,CONGRATULATIONS,No,+916543210987,,,,0
+S006,Anjali Gupta,11,MP,Food,Millet Cookies & Snacks,2026-05-16,Submitted,2026-05-20,Not Submitted,,Not Submitted,,2026-06-18,4,No,,No,+915432109876,,,,0
+S007,Ravi Verma,11,Rajasthan,Handicraft,Clay Pottery & Diyas,2026-06-02,Submitted,2026-06-07,Not Submitted,,Not Submitted,,2026-06-13,9,Yes,PROTOTYPE_REMINDER,No,+914321098765,,,,0
+S008,Pooja Kumari,11,UP,Agriculture,Mushroom Cultivation,2026-06-05,Not Submitted,,Not Submitted,,Not Submitted,,2026-06-05,17,Yes,REENGAGEMENT,No,+913210987654,,,,0
+S009,Suresh Patel,12,UP,Services,Tailoring & Stitching,2026-05-24,Not Submitted,,Not Submitted,,Not Submitted,,2026-06-09,13,Yes,IDEA_REMINDER,No,+912109876543,,,,0
+S010,Kavita Tiwari,12,MP,Retail,Stationery Shop,2026-05-09,Not Submitted,,Not Submitted,,Not Submitted,,2026-06-01,21,Yes,REENGAGEMENT,No,+911098765432,,,,0
+S011,Deepak Chauhan,11,MP,Food,Organic Masala Blends,2026-05-16,Submitted,2026-05-19,Submitted,2026-05-24,Submitted,2026-06-04,2026-06-21,1,No,CONGRATULATIONS,No,+917054411333,,,,0
+S012,Rekha Rani,11,Jharkhand,Handicraft,Jute Bag Stitching,2026-05-23,Submitted,2026-05-27,Submitted,2026-06-03,Submitted,2026-06-09,2026-06-21,1,No,CONGRATULATIONS,No,+919876543211,,,,0
+S013,Manish Joshi,11,MP,Agriculture,Honey Bee Keeping,2026-06-04,Submitted,2026-06-05,Submitted,2026-06-14,Submitted,2026-06-22,2026-06-21,1,No,CONGRATULATIONS,No,+918765432108,,,,0
+S014,Seema Mishra,12,UP,Services,Tuition Centre,2026-05-25,Submitted,2026-05-29,Not Submitted,,Not Submitted,,2026-06-15,7,No,,No,+917654321097,,,,0
+S015,Arun Pandey,12,Rajasthan,Retail,Vegetable Vendor,2026-05-29,Submitted,2026-05-31,Not Submitted,,Not Submitted,,2026-06-16,6,No,,No,+916543210986,,,,0
+S016,Nisha Rajput,12,Jharkhand,Food,Homemade Ghee & Butter,2026-05-11,Submitted,2026-05-13,Not Submitted,,Not Submitted,,2026-06-13,9,Yes,PROTOTYPE_REMINDER,No,+917054411333,,,,0
+S017,Rohit Sinha,11,Jharkhand,Handicraft,Block Print Fabric,2026-05-07,Submitted,2026-05-09,Submitted,2026-05-16,Submitted,2026-05-25,2026-06-17,5,No,CONGRATULATIONS,No,+919876543212,,,,0
+S018,Geeta Maurya,11,Rajasthan,Agriculture,Aloe Vera Farming,2026-05-14,Not Submitted,,Not Submitted,,Not Submitted,,2026-05-29,24,Yes,REENGAGEMENT,No,+918765432107,,,,0
+S019,Sanjay Nishad,12,Jharkhand,Services,Cycle Repair Shop,2026-06-07,Not Submitted,,Not Submitted,,Not Submitted,,2026-06-09,13,Yes,IDEA_REMINDER,No,+917054411333,,,,0
+S020,Lata Bind,12,MP,Retail,Second-hand Books Shop,2026-05-31,Not Submitted,,Not Submitted,,Not Submitted,,2026-06-03,19,Yes,REENGAGEMENT,No,+916543210985,,,,0
+S021,Pankaj Tripathi,12,Bihar,Food,Street Food Stall,2026-05-09,Submitted,2026-05-12,Submitted,2026-05-21,Submitted,2026-05-25,2026-06-22,0,No,CONGRATULATIONS,No,+915432109875,,,,0
+S022,Savita Pal,11,MP,Handicraft,Embroidery Work,2026-04-28,Submitted,2026-04-30,Submitted,2026-05-08,Submitted,2026-05-14,2026-06-21,1,No,CONGRATULATIONS,No,+914321098764,,,,0
+S023,Dinesh Rawat,11,Jharkhand,Agriculture,Maize & Wheat Trading,2026-05-18,Submitted,2026-05-19,Submitted,2026-05-26,Submitted,2026-06-04,2026-06-19,3,No,CONGRATULATIONS,No,+913210987653,,,,0
+S024,Usha Devi,12,Bihar,Services,Beauty Parlour,2026-06-04,Submitted,2026-06-08,Submitted,2026-06-12,Submitted,2026-06-23,2026-06-17,5,No,CONGRATULATIONS,No,+912109876542,,,,0
+S025,Hemant Lodhi,11,Bihar,Retail,Agri Input Store,2026-04-26,Submitted,2026-04-28,Not Submitted,,Not Submitted,,2026-06-10,12,Yes,PROTOTYPE_REMINDER,No,+917054411333,,,,0
